@@ -29,11 +29,19 @@ object CardRenderer {
         RATIO_9_16(1080, 1920)
     }
 
+    enum class Style {
+        HEADLINE_ONLY,
+        FULL_POST,
+        DOUBLE
+    }
+
     suspend fun renderCard(
         context: Context,
         tweet: TweetData,
         replyTweet: TweetData? = null,
-        aspectRatio: AspectRatio = AspectRatio.RATIO_4_5
+        style: Style = Style.HEADLINE_ONLY,
+        is45Ratio: Boolean = true,
+        aspectRatio: AspectRatio = if (is45Ratio) AspectRatio.RATIO_4_5 else AspectRatio.RATIO_1_1
     ): Bitmap = withContext(Dispatchers.IO) {
         val cardW = aspectRatio.width
         val cardH = aspectRatio.height
@@ -52,7 +60,7 @@ object CardRenderer {
 
         var currentY = 70f
 
-        // Optional Full Header (Avatar + Username)
+        // Optional Full Header (Avatar + Username) if FULL_POST
         if (style == Style.FULL_POST) {
             val avatarSize = 90
             val avatarBitmap = tweet.avatarUrl?.let { downloadBitmap(it) }
@@ -121,18 +129,17 @@ object CardRenderer {
         val mediaBitmaps = tweet.mediaUrls.mapNotNull { downloadBitmap(it) }
 
         if (mediaBitmaps.isNotEmpty()) {
-            val availableHeight = cardH - currentY - 52f // Bottom padding 52px
+            val maxBottomSpace = if (style == Style.DOUBLE && (replyTweet != null || tweet != null)) 260f else 52f
+            val availableHeight = cardH - currentY - maxBottomSpace
             val cornerRadius = 32f
 
             if (mediaBitmaps.size == 1) {
-                // Single large image with rounded corners
                 val img = mediaBitmaps[0]
                 val targetH = availableHeight.coerceAtMost(mediaW * 1.1f).toInt()
                 val rounded = getRoundedCornerBitmap(cropAndScale(img, mediaW, targetH), cornerRadius)
                 canvas.drawBitmap(rounded, mediaPadH.toFloat(), currentY, null)
-
+                currentY += targetH + 36f
             } else if (mediaBitmaps.size >= 2) {
-                // Two images side-by-side with rounded corners (matches reference image)
                 val gap = 18
                 val eachW = (mediaW - gap) / 2
                 val targetH = availableHeight.coerceAtMost(eachW * 1.15f).toInt()
@@ -142,6 +149,78 @@ object CardRenderer {
 
                 canvas.drawBitmap(img1, mediaPadH.toFloat(), currentY, null)
                 canvas.drawBitmap(img2, (mediaPadH + eachW + gap).toFloat(), currentY, null)
+                currentY += targetH + 36f
+            }
+        }
+
+        // 4. Double Mode: Bottom Tweet / Reply
+        if (style == Style.DOUBLE) {
+            val bottomTweet = replyTweet ?: tweet
+            val avatarSize = 80
+            val avatarBmp = bottomTweet.avatarUrl?.let { downloadBitmap(it) }
+            val avatarPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+            if (avatarBmp != null) {
+                val roundAvatar = getCircularBitmap(avatarBmp, avatarSize)
+                canvas.drawBitmap(roundAvatar, textStartX, currentY, avatarPaint)
+            } else {
+                avatarPaint.color = Color.parseColor("#E1E8ED")
+                canvas.drawCircle(textStartX + avatarSize / 2f, currentY + avatarSize / 2f, avatarSize / 2f, avatarPaint)
+            }
+
+            val namePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor("#0F1419")
+                textSize = 34f
+                typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            }
+            val handlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor("#536471")
+                textSize = 28f
+                typeface = Typeface.DEFAULT
+            }
+
+            canvas.drawText(bottomTweet.authorName, textStartX + avatarSize + 20f, currentY + 36f, namePaint)
+            val nameWidth = namePaint.measureText(bottomTweet.authorName)
+            canvas.drawText(bottomTweet.authorHandle, textStartX + avatarSize + 20f + nameWidth + 14f, currentY + 36f, handlePaint)
+
+            currentY += avatarSize + 20f
+
+            val replyTextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+                color = Color.parseColor("#0F1419")
+                textSize = 40f
+                typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+                letterSpacing = -0.01f
+            }
+
+            val cleanReplyText = bottomTweet.text
+                .replace(Regex("^(@[a-zA-Z0-9_]+\\s*)+"), "")
+                .replace(Regex("https?://\\S+"), "")
+                .trim()
+
+            if (cleanReplyText.isNotEmpty()) {
+                val replyLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    StaticLayout.Builder.obtain(cleanReplyText, 0, cleanReplyText.length, replyTextPaint, textMaxW)
+                        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                        .setLineSpacing(10f, 1.15f)
+                        .setIncludePad(false)
+                        .build()
+                } else {
+                    @Suppress("DEPRECATION")
+                    StaticLayout(
+                        cleanReplyText,
+                        replyTextPaint,
+                        textMaxW,
+                        Layout.Alignment.ALIGN_NORMAL,
+                        1.15f,
+                        10f,
+                        false
+                    )
+                }
+
+                canvas.save()
+                canvas.translate(textStartX, currentY)
+                replyLayout.draw(canvas)
+                canvas.restore()
             }
         }
 
