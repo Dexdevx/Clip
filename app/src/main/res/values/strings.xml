@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">X Shot</string>
+    <string name="paste_hint">Paste X / Twitter post link here...</string>
+    <string name="btn_fetch">Generate Screenshot</string>
+    <string name="btn_download">Save to Gallery</string>
+    <string name="btn_share">Share Image</string>
+    <string name="card_style_headline">Headline Only</string>
+    <string name="card_style_full">Full Post</string>
+    <string name="saved_success">Image saved to Pictures/XPostShot!</string>
+    <string name="error_invalid_url">Please enter a valid X / Twitter status URL</string>
+</resources>

@@ -1,0 +1,16 @@
+{
+  "name": "X Shot",
+  "short_name": "X Shot",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#0f1419",
+  "description": "Clean graphic screenshot generator for X / Twitter posts",
+  "icons": [
+    {
+      "src": "https://pbs.twimg.com/profile_images/1722245237895061504/UvA4qGz9_400x400.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}

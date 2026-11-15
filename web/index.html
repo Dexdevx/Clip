@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>X Shot — Clean Post Studio</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f4f5f8">
+  <meta name="referrer" content="no-referrer">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Twitter Official Chirp Font */
+    @font-face {
+      font-family: 'TwitterChirp';
+      src: url('fonts/chirp-regular-web.woff') format('woff'),
+           url('https://abs.twimg.com/fonts/chirp-regular-web.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'TwitterChirp';
+      src: url('fonts/chirp-medium-web.woff') format('woff'),
+           url('https://abs.twimg.com/fonts/chirp-medium-web.woff') format('woff');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'TwitterChirp';
+      src: url('fonts/chirp-bold-web.woff') format('woff'),
+           url('https://abs.twimg.com/fonts/chirp-bold-web.woff') format('woff');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'TwitterChirp';
+      src: url('fonts/chirp-heavy-web.woff') format('woff'),
+           url('https://abs.twimg.com/fonts/chirp-heavy-web.woff') format('woff');
+      font-weight: 800;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg-main: #f4f5f8;
+      --card-bg: #ffffff;
+      --text-primary: #121417;
+      --text-secondary: #8e94a0;
+      --accent-lime: #a3e635;
+      --accent-pill: #f0f2f5;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body {
+      font-family: 'TwitterChirp', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ios-card {
+      background: var(--card-bg);
+      border-radius: 28px;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+    .ios-button {
+      transition: transform 120ms cubic-bezier(0.2, 0.8, 0.4, 1), background-color 150ms ease, opacity 120ms ease;
+    }
+    .ios-button:active {
+      transform: scale(0.96);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .squircle {
+      border-radius: 22px;
+    }
+
+    /* Editable Text Selection Box (Pixel-perfect Apple / Canva Style) */
+    .editable-text-region {
+      position: absolute;
+      cursor: text;
+      user-select: text;
+      outline: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      background: transparent;
+      white-space: pre-wrap;
+      word-break: break-word;
+      transition: outline-color 0.12s ease;
+    }
+    .editable-text-region:hover:not(.is-selected) {
+      outline: 1.5px dashed rgba(29, 155, 240, 0.45);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .editable-text-region.is-selected,
+    .editable-text-region:focus {
+      outline: 1.5px solid #1d9bf0 !important;
+      outline-offset: 4px;
+      border-radius: 4px;
+      background: transparent !important;
+      color: inherit !important;
+      box-shadow: none !important;
+      z-index: 30;
+    }
+
+    /* Video Mode Editable Texts */
+    .video-editable-text {
+      cursor: text;
+      border: none;
+      outline: none;
+      padding: 0;
+      position: relative;
+      transition: all 0.12s ease;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .video-editable-text:hover:not(.is-selected) {
+      outline: 1.5px dashed rgba(29, 155, 240, 0.45);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    .video-editable-text.is-selected {
+      outline: 1.5px solid #1d9bf0 !important;
+      outline-offset: 4px;
+      border-radius: 4px;
+      background-color: rgba(29, 155, 240, 0.05) !important;
+    }
+
+    /* From Uiverse.io by alexruix - Black Geometric Box Preloader */
+    .loader {
+      width: 112px;
+      height: 112px;
+      position: relative;
+    }
+
+    .loader .box1,
+    .loader .box2,
+    .loader .box3 {
+      border: 16px solid #121417;
+      box-sizing: border-box;
+      position: absolute;
+      display: block;
+    }
+
+    .loader .box1 {
+      width: 112px;
+      height: 48px;
+      margin-top: 64px;
+      margin-left: 0px;
+      animation: abox1 4s ease-in-out infinite;
+    }
+
+    .loader .box2 {
+      width: 48px;
+      height: 48px;
+      margin-top: 0px;
+      margin-left: 0px;
+      animation: abox2 4s ease-in-out infinite;
+    }
+
+    .loader .box3 {
+      width: 48px;
+      height: 48px;
+      margin-top: 0px;
+      margin-left: 64px;
+      animation: abox3 4s ease-in-out infinite;
+    }
+
+    @keyframes abox1 {
+      0% {
+        width: 112px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+
+      12.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+
+      25% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+
+      37.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+
+      50% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+
+      62.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+
+      75% {
+        width: 48px;
+        height: 112px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      87.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      100% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+    }
+
+    @keyframes abox2 {
+      0% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      12.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      25% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      37.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      50% {
+        width: 112px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 0px;
+      }
+
+      62.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+
+      75% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+
+      87.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+
+      100% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+    }
+
+    @keyframes abox3 {
+      0% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+
+      12.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+
+      25% {
+        width: 48px;
+        height: 112px;
+        margin-top: 0px;
+        margin-left: 64px;
+      }
+
+      37.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 64px;
+      }
+
+      50% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 64px;
+      }
+
+      62.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 64px;
+      }
+
+      75% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 64px;
+      }
+
+      87.5% {
+        width: 48px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 64px;
+      }
+
+      100% {
+        width: 112px;
+        height: 48px;
+        margin-top: 64px;
+        margin-left: 0px;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-start pb-28 pt-2">
+
+  <!-- Main Mobile Frame Container -->
+  <div class="w-full max-w-[420px] px-4 flex flex-col space-y-4">
+
+    <!-- Section 1: Input Card -->
+    <div class="ios-card p-3.5 mt-2">
+      <!-- Search Input Pill with Clipboard Button -->
+      <div class="flex items-center bg-[#f7f8fa] rounded-2xl pl-4 pr-1.5 py-1.5 border border-black/[0.02] focus-within:ring-2 focus-within:ring-black/5 transition-all">
+        <svg class="w-4 h-4 text-gray-400 shrink-0 mr-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+        </svg>
+        <input 
+          id="postUrl" 
+          type="url" 
+          placeholder="Paste X / Twitter post link..." 
+          class="bg-transparent text-sm w-full text-gray-900 placeholder-gray-400 focus:outline-none font-medium pr-2"
+        />
+        <button id="btnFetch" title="Paste from clipboard & generate" class="ios-button w-10 h-10 rounded-xl bg-[#121417] text-white flex items-center justify-center shrink-0 shadow-md">
+          <svg id="clipboardIcon" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+          <svg id="btnSpinner" class="hidden animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 3 Compact Mode Buttons: Snapshot, Double, Video -->
+      <div class="grid grid-cols-3 gap-2 mt-2.5">
+        <!-- 1. Snapshot -->
+        <button id="btnModeSnapshot" class="ios-button h-11 px-2.5 rounded-2xl bg-[#f7f8fa] flex items-center justify-center space-x-1.5 border-2 border-black transition-all relative">
+          <svg class="w-4 h-4 text-gray-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span class="text-xs font-bold text-gray-900 tracking-tight">Snapshot</span>
+          <span id="dotSnapshot" class="w-1.5 h-1.5 rounded-full bg-[#a3e635] shadow-[0_0_6px_#a3e635] shrink-0"></span>
+        </button>
+
+        <!-- 2. Double -->
+        <button id="btnModeDouble" class="ios-button h-11 px-2.5 rounded-2xl bg-[#f7f8fa] flex items-center justify-center space-x-1.5 border-2 border-transparent transition-all relative">
+          <svg class="w-4 h-4 text-gray-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+          </svg>
+          <span class="text-xs font-bold text-gray-900 tracking-tight">Double</span>
+          <span id="dotDouble" class="hidden w-1.5 h-1.5 rounded-full bg-[#a3e635] shadow-[0_0_6px_#a3e635] shrink-0"></span>
+        </button>
+
+        <!-- 3. Video -->
+        <button id="btnModeVideo" class="ios-button h-11 px-2.5 rounded-2xl bg-[#f7f8fa] flex items-center justify-center space-x-1.5 border-2 border-transparent transition-all relative">
+          <svg class="w-4 h-4 text-gray-700 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="text-xs font-bold text-gray-900 tracking-tight">Video</span>
+          <span id="dotVideo" class="hidden w-1.5 h-1.5 rounded-full bg-[#a3e635] shadow-[0_0_6px_#a3e635] shrink-0"></span>
+        </button>
+      </div>
+
+      <!-- 2nd Tweet Input Container (revealed when Double mode is active) -->
+      <div id="sectionTweet2" class="hidden mt-3.5 pt-3.5 border-t border-black/[0.04]">
+        <div class="flex items-center justify-between mb-1.5 px-0.5">
+          <label class="text-[11px] font-bold text-gray-700">2nd Tweet (Bottom Reply Text)</label>
+          <button id="btnSampleReply" class="text-[10px] font-semibold text-sky-600 hover:text-sky-800 transition-colors">
+            Reset Sample Reply
+          </button>
+        </div>
+        <div class="flex items-center bg-[#f7f8fa] rounded-2xl pl-3.5 pr-1.5 py-1.5 border border-black/[0.02]">
+          <svg class="w-3.5 h-3.5 text-gray-400 shrink-0 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+          </svg>
+          <input 
+            id="postUrl2" 
+            type="text" 
+            placeholder="Type comment or paste 2nd link..." 
+            class="bg-transparent text-sm w-full text-gray-900 placeholder-gray-400 focus:outline-none font-medium pr-2"
+          />
+          <button id="btnPaste2" title="Paste 2nd link from clipboard" class="ios-button w-8 h-8 rounded-xl bg-white text-gray-700 flex items-center justify-center shrink-0 shadow-sm border border-black/[0.04]">
+            <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Live Clean Preview Card -->
+    <section>
+      <!-- Header Row: Preset button (on Double) or Preview text, and Save button on right -->
+      <div class="flex items-center justify-between px-1 mb-2.5">
+        <div class="flex items-center">
+          <h2 id="previewTextLabel" class="text-[17px] font-bold text-gray-900">Preview</h2>
+          
+          <!-- Preset Button: Only appears when Double is selected -->
+          <button id="btnPresetToggle" class="hidden ios-button px-3 py-1.5 rounded-full bg-white text-gray-900 text-xs font-bold shadow-sm border border-black/[0.06] flex items-center space-x-1.5 hover:bg-gray-50 active:scale-95 transition-all">
+            <span class="w-2 h-2 rounded-full bg-[#1d9bf0]"></span>
+            <span id="presetCurrentName">Shows Buzz</span>
+            <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+        </div>
+
+        <!-- Top Save Button -->
+        <button id="btnSaveTop" class="ios-button px-4 py-1.5 rounded-full bg-[#121417] text-white text-xs font-bold shadow-sm flex items-center space-x-1.5 hover:bg-black transition-all">
+          <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          <span id="saveBtnText">Save</span>
+        </button>
+      </div>
+
+      <div class="ios-card p-3 overflow-hidden flex flex-col items-center relative">
+        <!-- Preloader Overlay in Black (Alexruix from Uiverse.io) -->
+        <div id="cardLoaderOverlay" class="hidden absolute inset-0 z-40 bg-white/95 backdrop-blur-md rounded-[28px] flex flex-col items-center justify-center transition-all duration-300">
+          <div class="loader">
+            <div class="box1"></div>
+            <div class="box2"></div>
+            <div class="box3"></div>
+          </div>
+        </div>
+
+        <!-- Static Canvas Container (for Snapshot & Double) -->
+        <div id="canvasContainer" class="w-full bg-[#f4f5f8] rounded-[22px] p-2 flex justify-center items-center">
+          <div id="canvasWrapper" class="relative max-w-full inline-block">
+            <canvas id="renderCanvas" class="w-full max-w-full h-auto rounded-[16px] shadow-sm bg-white block"></canvas>
+            <!-- Overlay layer for inline click-to-edit selection boxes -->
+            <div id="textOverlayLayer" class="absolute inset-0 z-20 pointer-events-auto"></div>
+          </div>
+        </div>
+
+        <!-- Interactive Video Container (for Video Mode) -->
+        <div id="videoContainer" class="hidden w-full bg-[#f4f5f8] rounded-[22px] p-3 flex flex-col items-center">
+          <div id="videoCardInner" class="w-full bg-white rounded-[16px] p-5 shadow-sm flex flex-col justify-center transition-all">
+            <!-- Headline Text (Editable, left-aligned, 46px equivalent, unbolded / normal weight) -->
+            <p id="videoHeadlineText" title="Click to edit headline text" class="video-editable-text text-[16px] font-normal text-[#0F1419] leading-snug tracking-tight mb-4 text-left">
+              Grand Theft Auto VI has now surpassed 12.1M preorders and generated over $1.18B in revenue, per Sensor Tower
+            </p>
+            <!-- Playable Video Element (Preserves original aspect ratio with 0.5px black border, zero letterboxing) -->
+            <div id="videoWrapper" class="w-full rounded-[14px] overflow-hidden relative border-[0.5px] border-black/30 bg-transparent flex items-center justify-center transition-all">
+              <video id="cardVideoPlayer" class="w-full h-auto block rounded-[14px] bg-transparent" autoplay loop muted playsinline controls referrerpolicy="no-referrer">
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+              </video>
+            </div>
+            <!-- Optional 2nd Tweet in Video Card (Scaled up 25%) -->
+            <div id="videoReplyContainer" class="hidden mt-4 pt-4 border-t border-black/[0.06] flex items-start space-x-3.5">
+              <img id="videoReplyAvatar" src="https://pub-22dea672f32d4ef487d289c7facd8b0e.r2.dev/logos/showsbuzz.jpg" class="w-11 h-11 rounded-xl object-cover shadow-sm" alt="Shows Buzz">
+              <div class="flex-1">
+                <div class="flex items-center">
+                  <span id="videoReplyName" title="Click to edit author" class="video-editable-text text-[16px] font-bold text-gray-900">Shows Buzz</span>
+                  <svg class="w-[18px] h-[18px] ml-2 shrink-0" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="m512 268c0 17.9-4.3 34.5-12.9 49.7s-20.1 27.1-34.6 35.4c.4 2.7.6 6.9.6 12.6 0 27.1-9.1 50.1-27.1 69.1-18.1 19.1-39.9 28.6-65.4 28.6-11.4 0-22.3-2.1-32.6-6.3-8 16.4-19.5 29.6-34.6 39.7-15 10.2-31.5 15.2-49.4 15.2-18.3 0-34.9-4.9-49.7-14.9-14.9-9.9-26.3-23.2-34.3-40-10.3 4.2-21.1 6.3-32.6 6.3-25.5 0-47.4-9.5-65.7-28.6-18.3-19-27.4-42.1-27.4-69.1 0-3 .4-7.2 1.1-12.6-14.5-8.4-26-20.2-34.6-35.4-8.5-15.2-12.8-31.8-12.8-49.7 0-19 4.8-36.5 14.3-52.3s22.3-27.5 38.3-35.1c-4.2-11.4-6.3-22.9-6.3-34.3 0-27 9.1-50.1 27.4-69.1s40.2-28.6 65.7-28.6c11.4 0 22.3 2.1 32.6 6.3 8-16.4 19.5-29.6 34.6-39.7 15-10.1 31.5-15.2 49.4-15.2s34.4 5.1 49.4 15.1c15 10.1 26.6 23.3 34.6 39.7 10.3-4.2 21.1-6.3 32.6-6.3 25.5 0 47.3 9.5 65.4 28.6s27.1 42.1 27.1 69.1c0 12.6-1.9 24-5.7 34.3 16 7.6 28.8 19.3 38.3 35.1 9.5 15.9 14.3 33.4 14.3 52.4zm-266.9 77.1 105.7-158.3c2.7-4.2 3.5-8.8 2.6-13.7-1-4.9-3.5-8.8-7.7-11.4-4.2-2.7-8.8-3.6-13.7-2.9-5 .8-9 3.2-12 7.4l-93.1 140-42.9-42.8c-3.8-3.8-8.2-5.6-13.1-5.4-5 .2-9.3 2-13.1 5.4-3.4 3.4-5.1 7.7-5.1 12.9 0 5.1 1.7 9.4 5.1 12.9l58.9 58.9 2.9 2.3c3.4 2.3 6.9 3.4 10.3 3.4 6.7-.1 11.8-2.9 15.2-8.7z" fill="#e5a93b"/>
+                  </svg>
+                </div>
+                <span id="videoReplyHandle" title="Click to edit handle" class="video-editable-text text-xs text-gray-400">@shows.buzz</span>
+                <p id="videoReplyText" title="Click to edit comment" class="video-editable-text text-[13.5px] text-gray-900 mt-1.5 font-normal">The cyberpunk people shut up real quick</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Preset Modal Dialog (for Double Mode Author Presets) -->
+  <div id="presetModalContainer" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div id="presetModalBackdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"></div>
+    
+    <!-- Modal Dialog Sheet -->
+    <div class="relative bg-white rounded-[28px] w-full max-w-[360px] p-5 shadow-2xl z-10 flex flex-col space-y-3.5 border border-black/[0.04]">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-2 border-b border-black/[0.04]">
+        <div>
+          <h3 class="text-base font-bold text-gray-900">Author Presets</h3>
+          <p class="text-[11px] text-gray-400">Choose 2nd tweet author profile</p>
+        </div>
+        <button id="btnClosePresetModal" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:text-black ios-button">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Presets List -->
+      <div id="presetsList" class="flex flex-col space-y-2 max-h-[260px] overflow-y-auto custom-scroll pr-0.5">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Add New Preset Section -->
+      <div class="pt-2 border-t border-black/[0.04]">
+        <button id="btnToggleAddPreset" class="w-full py-2 px-3 rounded-xl bg-gray-50 text-gray-700 text-xs font-bold flex items-center justify-between hover:bg-gray-100 ios-button">
+          <span class="flex items-center space-x-1.5">
+            <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <span>Add Custom Preset</span>
+          </span>
+          <span id="addPresetChevron" class="text-xs text-gray-400 font-bold">+</span>
+        </button>
+
+        <form id="formAddPreset" class="hidden mt-2.5 flex flex-col space-y-2 p-3 bg-gray-50 rounded-2xl border border-black/[0.03]">
+          <input id="inputNewPresetName" type="text" placeholder="Profile Name (e.g. Shows Buzz)" class="bg-white text-xs px-3 py-2 rounded-xl border border-black/[0.06] text-gray-900 focus:outline-none" required />
+          <input id="inputNewPresetTag" type="text" placeholder="Handle (e.g. @shows.buzz)" class="bg-white text-xs px-3 py-2 rounded-xl border border-black/[0.06] text-gray-900 focus:outline-none" required />
+          <input id="inputNewPresetImg" type="url" placeholder="Avatar Image URL (https://...)" class="bg-white text-xs px-3 py-2 rounded-xl border border-black/[0.06] text-gray-900 focus:outline-none" required />
+          <button type="submit" class="w-full py-2 rounded-xl bg-[#121417] text-white text-xs font-bold shadow-sm ios-button hover:bg-black">
+            Save & Apply Preset
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Aspect Ratio Toolbar (Direct canvas ratio switcher) -->
+  <nav class="fixed bottom-5 z-40 bg-white/95 backdrop-blur-xl rounded-full px-3 py-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.1)] border border-black/[0.06] flex items-center space-x-2">
+    <!-- 1:1 Square -->
+    <button id="ratioBtn11" title="1:1 Square" class="ratio-btn ios-button px-2 py-1 rounded-2xl flex items-center justify-center transition-all text-gray-400 hover:text-gray-700">
+      <div class="ratio-box w-[36px] h-[36px] rounded-[8px] border-2 border-current flex items-center justify-center transition-all">
+        <span class="text-[10px] font-extrabold tracking-tight">1:1</span>
+      </div>
+    </button>
+
+    <!-- 3:4 Portrait -->
+    <button id="ratioBtn34" title="3:4 Portrait" class="ratio-btn ios-button px-2 py-1 rounded-2xl flex items-center justify-center transition-all text-gray-400 hover:text-gray-700">
+      <div class="ratio-box w-[30px] h-[40px] rounded-[8px] border-2 border-current flex items-center justify-center transition-all">
+        <span class="text-[10px] font-extrabold tracking-tight">3:4</span>
+      </div>
+    </button>
+
+    <!-- 4:5 Instagram Portrait (Default) -->
+    <button id="ratioBtn45" title="4:5 Instagram" class="ratio-btn ios-button px-2 py-1 rounded-2xl flex items-center justify-center transition-all text-[#121417]">
+      <div class="ratio-box w-[32px] h-[40px] rounded-[8px] border-2 border-black bg-[#121417] text-white flex items-center justify-center transition-all shadow-sm">
+        <span class="text-[10px] font-extrabold tracking-tight">4:5</span>
+      </div>
+    </button>
+
+    <!-- 9:16 Story / Reel -->
+    <button id="ratioBtn916" title="9:16 Story" class="ratio-btn ios-button px-2 py-1 rounded-2xl flex items-center justify-center transition-all text-gray-400 hover:text-gray-700">
+      <div class="ratio-box w-[24px] h-[42px] rounded-[7px] border-2 border-current flex items-center justify-center transition-all">
+        <span class="text-[9px] font-extrabold tracking-tight">9:16</span>
+      </div>
+    </button>
+  </nav>
+
+  <script>
+    // Sample GTA 6 post matching user's original image
+    const samplePost = {
+      text: "Grand Theft Auto VI has now surpassed 12.1M preorders and generated over $1.18B in revenue, per Sensor Tower",
+      authorName: "GTA 6 Countdown",
+      authorHandle: "@gtasix_",
+      avatarUrl: "https://pbs.twimg.com/profile_images/1722245237895061504/UvA4qGz9_400x400.jpg",
+      mediaUrls: [
+        "https://pbs.twimg.com/media/GBJ9jS7WIAAE6i7?format=jpg&name=medium",
+        "https://pbs.twimg.com/media/GBJ9jS4XsAA9c_k?format=jpg&name=medium"
+      ],
+      thumbnailUrl: "https://pbs.twimg.com/media/GBJ9jS7WIAAE6i7?format=jpg&name=medium",
+      videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+    };
+
+    // Built-in Author Presets as requested by user
+    const defaultAuthorPresets = [
+      {
+        id: 'shows',
+        name: 'Shows Buzz',
+        tag: '@shows.buzz',
+        image: 'https://pub-22dea672f32d4ef487d289c7facd8b0e.r2.dev/logos/showsbuzz.jpg'
+      },
+      {
+        id: 'tuxido',
+        name: 'Tuxido',
+        tag: '@2xidoo',
+        image: 'https://pub-22dea672f32d4ef487d289c7facd8b0e.r2.dev/logos/2xidoo.jpg'
+      }
+    ];
+
+    let authorPresets = [];
+    try {
+      const saved = localStorage.getItem('xshot_author_presets');
+      authorPresets = saved ? JSON.parse(saved) : defaultAuthorPresets;
+    } catch (e) {
+      authorPresets = defaultAuthorPresets;
+    }
+
+    let activePresetId = 'shows';
+
+    // Sample 2nd Tweet (matching user's Screenshot 2)
+    const sampleReply = {
+      text: "The cyberpunk people shut up real quick",
+      authorName: "Shows Buzz",
+      authorHandle: "@shows.buzz",
+      avatarUrl: "https://pub-22dea672f32d4ef487d289c7facd8b0e.r2.dev/logos/showsbuzz.jpg",
+      isVerified: true
+    };
+
+    let currentTweet = samplePost;
+    let currentReply = sampleReply;
+    let currentMode = 'snapshot'; // 'snapshot', 'double', or 'video'
+    let currentRatio = '4:5';
+
+    // Core Canvas & Overlay references (declared right at top to prevent TDZ)
+    const canvas = document.getElementById('renderCanvas');
+    const ctx = canvas.getContext('2d');
+    const textOverlayLayer = document.getElementById('textOverlayLayer');
+    const cardLoaderOverlay = document.getElementById('cardLoaderOverlay');
+    let activeEditBox = null;
+
+    // Golden Verified Badge SVG Path from user
+    const goldVerifiedSvgPath = "m512 268c0 17.9-4.3 34.5-12.9 49.7s-20.1 27.1-34.6 35.4c.4 2.7.6 6.9.6 12.6 0 27.1-9.1 50.1-27.1 69.1-18.1 19.1-39.9 28.6-65.4 28.6-11.4 0-22.3-2.1-32.6-6.3-8 16.4-19.5 29.6-34.6 39.7-15 10.2-31.5 15.2-49.4 15.2-18.3 0-34.9-4.9-49.7-14.9-14.9-9.9-26.3-23.2-34.3-40-10.3 4.2-21.1 6.3-32.6 6.3-25.5 0-47.4-9.5-65.7-28.6-18.3-19-27.4-42.1-27.4-69.1 0-3 .4-7.2 1.1-12.6-14.5-8.4-26-20.2-34.6-35.4-8.5-15.2-12.8-31.8-12.8-49.7 0-19 4.8-36.5 14.3-52.3s22.3-27.5 38.3-35.1c-4.2-11.4-6.3-22.9-6.3-34.3 0-27 9.1-50.1 27.4-69.1s40.2-28.6 65.7-28.6c11.4 0 22.3 2.1 32.6 6.3 8-16.4 19.5-29.6 34.6-39.7 15-10.1 31.5-15.2 49.4-15.2s34.4 5.1 49.4 15.1c15 10.1 26.6 23.3 34.6 39.7 10.3-4.2 21.1-6.3 32.6-6.3 25.5 0 47.3 9.5 65.4 28.6s27.1 42.1 27.1 69.1c0 12.6-1.9 24-5.7 34.3 16 7.6 28.8 19.3 38.3 35.1 9.5 15.9 14.3 33.4 14.3 52.4zm-266.9 77.1 105.7-158.3c2.7-4.2 3.5-8.8 2.6-13.7-1-4.9-3.5-8.8-7.7-11.4-4.2-2.7-8.8-3.6-13.7-2.9-5 .8-9 3.2-12 7.4l-93.1 140-42.9-42.8c-3.8-3.8-8.2-5.6-13.1-5.4-5 .2-9.3 2-13.1 5.4-3.4 3.4-5.1 7.7-5.1 12.9 0 5.1 1.7 9.4 5.1 12.9l58.9 58.9 2.9 2.3c3.4 2.3 6.9 3.4 10.3 3.4 6.7-.1 11.8-2.9 15.2-8.7z";
+    const goldVerifiedPath = new Path2D(goldVerifiedSvgPath);
+
+    // Controls
+    const postUrlInput = document.getElementById('postUrl');
+    const postUrl2Input = document.getElementById('postUrl2');
+    const btnFetch = document.getElementById('btnFetch');
+    const btnPaste2 = document.getElementById('btnPaste2');
+    const btnSampleReply = document.getElementById('btnSampleReply');
+    const clipboardIcon = document.getElementById('clipboardIcon');
+    const btnSpinner = document.getElementById('btnSpinner');
+    const btnSaveTop = document.getElementById('btnSaveTop');
+    const saveBtnText = document.getElementById('saveBtnText');
+    const previewTextLabel = document.getElementById('previewTextLabel');
+    const btnPresetToggle = document.getElementById('btnPresetToggle');
+    const presetCurrentName = document.getElementById('presetCurrentName');
+
+    // Preset Modal Elements
+    const presetModalContainer = document.getElementById('presetModalContainer');
+    const presetModalBackdrop = document.getElementById('presetModalBackdrop');
+    const btnClosePresetModal = document.getElementById('btnClosePresetModal');
+    const presetsList = document.getElementById('presetsList');
+    const btnToggleAddPreset = document.getElementById('btnToggleAddPreset');
+    const formAddPreset = document.getElementById('formAddPreset');
+    const inputNewPresetName = document.getElementById('inputNewPresetName');
+    const inputNewPresetTag = document.getElementById('inputNewPresetTag');
+    const inputNewPresetImg = document.getElementById('inputNewPresetImg');
+
+    // Mode Buttons
+    const btnModeSnapshot = document.getElementById('btnModeSnapshot');
+    const btnModeDouble = document.getElementById('btnModeDouble');
+    const btnModeVideo = document.getElementById('btnModeVideo');
+    const dotSnapshot = document.getElementById('dotSnapshot');
+    const dotDouble = document.getElementById('dotDouble');
+    const dotVideo = document.getElementById('dotVideo');
+    const sectionTweet2 = document.getElementById('sectionTweet2');
+
+    // Preview Elements
+    const canvasContainer = document.getElementById('canvasContainer');
+    const videoContainer = document.getElementById('videoContainer');
+    const videoHeadlineText = document.getElementById('videoHeadlineText');
+    const cardVideoPlayer = document.getElementById('cardVideoPlayer');
+    const videoReplyContainer = document.getElementById('videoReplyContainer');
+    const videoReplyAvatar = document.getElementById('videoReplyAvatar');
+    const videoReplyName = document.getElementById('videoReplyName');
+    const videoReplyHandle = document.getElementById('videoReplyHandle');
+    const videoReplyText = document.getElementById('videoReplyText');
+
+    // Aspect Ratio Buttons
+    const ratioBtns = {
+      '1:1': document.getElementById('ratioBtn11'),
+      '3:4': document.getElementById('ratioBtn34'),
+      '4:5': document.getElementById('ratioBtn45'),
+      '9:16': document.getElementById('ratioBtn916')
+    };
+
+    function setRatio(ratio) {
+      currentRatio = ratio;
+
+      Object.entries(ratioBtns).forEach(([r, btn]) => {
+        const box = btn.querySelector('.ratio-box');
+        if (r === ratio) {
+          btn.classList.remove('text-gray-400');
+          btn.classList.add('text-[#121417]');
+          box.classList.add('bg-[#121417]', 'text-white', 'border-black');
+          box.classList.remove('border-current');
+        } else {
+          btn.classList.add('text-gray-400');
+          btn.classList.remove('text-[#121417]');
+          box.classList.remove('bg-[#121417]', 'text-white', 'border-black');
+          box.classList.add('border-current');
+        }
+      });
+
+      if (currentMode === 'video') {
+        renderVideoCard();
+      } else {
+        renderTweetCard(currentTweet);
+      }
+    }
+
+    Object.keys(ratioBtns).forEach(r => {
+      ratioBtns[r].addEventListener('click', () => setRatio(r));
+    });
+
+    // Preset System: Render Presets in Modal
+    function renderPresetsList() {
+      presetsList.innerHTML = '';
+      authorPresets.forEach(preset => {
+        const isSelected = preset.id === activePresetId;
+        const row = document.createElement('div');
+        row.className = `p-2.5 rounded-2xl flex items-center justify-between cursor-pointer transition-all ios-button ${
+          isSelected ? 'bg-[#121417] text-white' : 'bg-gray-50 hover:bg-gray-100 text-gray-900 border border-black/[0.03]'
+        }`;
+
+        row.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <img src="${preset.image}" class="w-9 h-9 rounded-xl object-cover bg-gray-200" onerror="this.src='https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png'" alt="${preset.name}">
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-xs font-bold leading-tight">${preset.name}</span>
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="m512 268c0 17.9-4.3 34.5-12.9 49.7s-20.1 27.1-34.6 35.4c.4 2.7.6 6.9.6 12.6 0 27.1-9.1 50.1-27.1 69.1-18.1 19.1-39.9 28.6-65.4 28.6-11.4 0-22.3-2.1-32.6-6.3-8 16.4-19.5 29.6-34.6 39.7-15 10.2-31.5 15.2-49.4 15.2-18.3 0-34.9-4.9-49.7-14.9-14.9-9.9-26.3-23.2-34.3-40-10.3 4.2-21.1 6.3-32.6 6.3-25.5 0-47.4-9.5-65.7-28.6-18.3-19-27.4-42.1-27.4-69.1 0-3 .4-7.2 1.1-12.6-14.5-8.4-26-20.2-34.6-35.4-8.5-15.2-12.8-31.8-12.8-49.7 0-19 4.8-36.5 14.3-52.3s22.3-27.5 38.3-35.1c-4.2-11.4-6.3-22.9-6.3-34.3 0-27 9.1-50.1 27.4-69.1s40.2-28.6 65.7-28.6c11.4 0 22.3 2.1 32.6 6.3 8-16.4 19.5-29.6 34.6-39.7 15-10.1 31.5-15.2 49.4-15.2s34.4 5.1 49.4 15.1c15 10.1 26.6 23.3 34.6 39.7 10.3-4.2 21.1-6.3 32.6-6.3 25.5 0 47.3 9.5 65.4 28.6s27.1 42.1 27.1 69.1c0 12.6-1.9 24-5.7 34.3 16 7.6 28.8 19.3 38.3 35.1 9.5 15.9 14.3 33.4 14.3 52.4zm-266.9 77.1 105.7-158.3c2.7-4.2 3.5-8.8 2.6-13.7-1-4.9-3.5-8.8-7.7-11.4-4.2-2.7-8.8-3.6-13.7-2.9-5 .8-9 3.2-12 7.4l-93.1 140-42.9-42.8c-3.8-3.8-8.2-5.6-13.1-5.4-5 .2-9.3 2-13.1 5.4-3.4 3.4-5.1 7.7-5.1 12.9 0 5.1 1.7 9.4 5.1 12.9l58.9 58.9 2.9 2.3c3.4 2.3 6.9 3.4 10.3 3.4 6.7-.1 11.8-2.9 15.2-8.7z" fill="#e5a93b"/>
+                </svg>
+              </div>
+              <span class="text-[10px] ${isSelected ? 'text-gray-300' : 'text-gray-400'}">${preset.tag}</span>
+            </div>
+          </div>
+          ${isSelected ? '<span class="text-xs text-sky-400 font-bold px-2">Active</span>' : ''}
+        `;
+
+        row.addEventListener('click', () => {
+          applyPreset(preset);
+          closePresetModal();
+        });
+
+        presetsList.appendChild(row);
+      });
+    }
+
+    function applyPreset(preset) {
+      activePresetId = preset.id;
+      currentReply.authorName = preset.name;
+      currentReply.authorHandle = preset.tag;
+      currentReply.avatarUrl = preset.image;
+      currentReply.isVerified = true;
+
+      presetCurrentName.textContent = preset.name;
+
+      // Update Video card elements if applicable
+      videoReplyName.textContent = preset.name;
+      videoReplyHandle.textContent = preset.tag;
+      videoReplyAvatar.src = preset.image;
+
+      if (currentMode === 'double') {
+        renderTweetCard(currentTweet);
+      }
+    }
+
+    function openPresetModal() {
+      renderPresetsList();
+      presetModalContainer.classList.remove('hidden');
+    }
+
+    function closePresetModal() {
+      presetModalContainer.classList.add('hidden');
+      formAddPreset.classList.add('hidden');
+    }
+
+    btnPresetToggle.addEventListener('click', openPresetModal);
+    btnClosePresetModal.addEventListener('click', closePresetModal);
+    presetModalBackdrop.addEventListener('click', closePresetModal);
+
+    btnToggleAddPreset.addEventListener('click', () => {
+      formAddPreset.classList.toggle('hidden');
+    });
+
+    formAddPreset.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = inputNewPresetName.value.trim();
+      let tag = inputNewPresetTag.value.trim();
+      if (!tag.startsWith('@')) tag = '@' + tag;
+      const img = inputNewPresetImg.value.trim();
+
+      if (name && tag && img) {
+        const newPreset = {
+          id: 'custom_' + Date.now(),
+          name,
+          tag,
+          image: img
+        };
+        authorPresets.push(newPreset);
+        try {
+          localStorage.setItem('xshot_author_presets', JSON.stringify(authorPresets));
+        } catch (_) {}
+
+        applyPreset(newPreset);
+        closePresetModal();
+        inputNewPresetName.value = '';
+        inputNewPresetTag.value = '';
+        inputNewPresetImg.value = '';
+      }
+    });
+
+    // Mode Selection Logic
+    function setMode(mode) {
+      currentMode = mode;
+
+      [btnModeSnapshot, btnModeDouble, btnModeVideo].forEach(btn => {
+        btn.classList.remove('border-black');
+        btn.classList.add('border-transparent');
+      });
+      [dotSnapshot, dotDouble, dotVideo].forEach(dot => dot.classList.add('hidden'));
+
+      if (mode === 'snapshot') {
+        btnModeSnapshot.classList.add('border-black');
+        btnModeSnapshot.classList.remove('border-transparent');
+        dotSnapshot.classList.remove('hidden');
+        sectionTweet2.classList.add('hidden');
+        canvasContainer.classList.remove('hidden');
+        videoContainer.classList.add('hidden');
+        saveBtnText.textContent = "Save";
+
+        // In Snapshot: show "Preview" text, hide "Preset" button
+        previewTextLabel.classList.remove('hidden');
+        btnPresetToggle.classList.add('hidden');
+
+        renderTweetCard(currentTweet);
+
+      } else if (mode === 'double') {
+        btnModeDouble.classList.add('border-black');
+        btnModeDouble.classList.remove('border-transparent');
+        dotDouble.classList.remove('hidden');
+        sectionTweet2.classList.remove('hidden');
+        canvasContainer.classList.remove('hidden');
+        videoContainer.classList.add('hidden');
+        saveBtnText.textContent = "Save";
+
+        // In Double: replace "Preview" text with "Preset" button!
+        previewTextLabel.classList.add('hidden');
+        btnPresetToggle.classList.remove('hidden');
+
+        if (!postUrl2Input.value) {
+          postUrl2Input.value = "The cyberpunk people shut up real quick";
+        }
+        renderTweetCard(currentTweet);
+
+      } else if (mode === 'video') {
+        btnModeVideo.classList.add('border-black');
+        btnModeVideo.classList.remove('border-transparent');
+        dotVideo.classList.remove('hidden');
+        sectionTweet2.classList.add('hidden');
+        canvasContainer.classList.add('hidden');
+        videoContainer.classList.remove('hidden');
+        saveBtnText.textContent = "Save MP4";
+
+        // In Video: show "Preview" text, hide "Preset" button
+        previewTextLabel.classList.remove('hidden');
+        btnPresetToggle.classList.add('hidden');
+
+        renderVideoCard();
+      }
+    }
+
+    btnModeSnapshot.addEventListener('click', () => setMode('snapshot'));
+    btnModeDouble.addEventListener('click', () => setMode('double'));
+    btnModeVideo.addEventListener('click', () => setMode('video'));
+
+    // Sample Reply Reset
+    btnSampleReply.addEventListener('click', () => {
+      currentReply.text = "The cyberpunk people shut up real quick";
+      postUrl2Input.value = "The cyberpunk people shut up real quick";
+      renderTweetCard(currentTweet);
+    });
+
+    // 2nd Tweet Paste Button
+    btnPaste2.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          postUrl2Input.value = text.trim();
+          handleReplyInput(text.trim());
+        }
+      } catch (e) {
+        postUrl2Input.focus();
+      }
+    });
+
+    function cleanReplyText(text) {
+      if (!text) return '';
+      return text
+        .replace(/https?:\/\/\S+/gi, '')
+        .replace(/(^|\s)t\.co\/\S+/gi, '')
+        .replace(/@[a-zA-Z0-9_.]+/gi, '')
+        .replace(/[ \t]+/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    postUrl2Input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleReplyInput(postUrl2Input.value.trim());
+      }
+    });
+
+    postUrl2Input.addEventListener('input', () => {
+      currentReply.text = cleanReplyText(postUrl2Input.value);
+      renderTweetCard(currentTweet);
+    });
+
+    async function handleReplyInput(val) {
+      if (!val) return;
+      const id = extractTweetId(val);
+      if (id) {
+        try {
+          const t = await fetchTweet(id);
+          currentReply.text = cleanReplyText(t.text);
+          postUrl2Input.value = currentReply.text;
+        } catch (e) {
+          currentReply.text = cleanReplyText(val);
+          postUrl2Input.value = currentReply.text;
+        }
+      } else {
+        currentReply.text = cleanReplyText(val);
+        postUrl2Input.value = currentReply.text;
+      }
+      renderTweetCard(currentTweet);
+    }
+
+    // Clipboard Button Click: auto detects copied link from clipboard and generates
+    btnFetch.addEventListener('click', async () => {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && (text.includes('twitter.com') || text.includes('x.com') || /^\d+$/.test(text.trim()))) {
+          postUrlInput.value = text.trim();
+          fetchAndRender(text.trim());
+          return;
+        }
+      } catch (e) {
+        console.warn("Clipboard access not available:", e);
+      }
+
+      if (postUrlInput.value.trim()) {
+        fetchAndRender(postUrlInput.value.trim());
+      } else {
+        alert("Please copy an X / Twitter link to your clipboard first, or type it here.");
+      }
+    });
+
+    postUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        fetchAndRender(postUrlInput.value.trim());
+      }
+    });
+
+    postUrlInput.addEventListener('paste', () => {
+      setTimeout(() => {
+        const val = postUrlInput.value.trim();
+        if (val) fetchAndRender(val);
+      }, 50);
+    });
+
+    function extractTweetId(url) {
+      const m = url.match(/(?:twitter\.com|x\.com|fxtwitter\.com|vxtwitter\.com)\/.*?\/status\/(\d+)/);
+      if (m) return m[1];
+      if (/^\d+$/.test(url.trim())) return url.trim();
+      return null;
+    }
+
+    async function fetchAndRender(rawUrl) {
+      const id = extractTweetId(rawUrl || '');
+      if (!id) {
+        alert("Please paste a valid X / Twitter post link.");
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const tweet = await fetchTweet(id);
+        currentTweet = tweet;
+        if (currentMode === 'video') {
+          renderVideoCard();
+        } else {
+          await renderTweetCard(tweet);
+        }
+      } catch (err) {
+        alert(err.message || "Failed to load tweet.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function fetchTweet(id) {
+      // 1. Try FxTwitter API
+      try {
+        const res = await fetch(`https://api.fxtwitter.com/status/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.tweet) {
+            const t = data.tweet;
+            const cleanText = (t.text || '').replace(/https:\/\/t\.co\/\S+$/g, '').trim();
+            const photos = (t.media && t.media.photos) ? t.media.photos.map(p => p.url) : [];
+            let videoUrl = null;
+            let thumbnailUrl = null;
+
+            if (t.media && t.media.videos && t.media.videos.length > 0) {
+              const v = t.media.videos[0];
+              videoUrl = v.url || null;
+              thumbnailUrl = v.thumbnail_url || null;
+            } else if (t.media && t.media.video) {
+              videoUrl = t.media.video.url || null;
+              thumbnailUrl = t.media.video.thumbnail_url || null;
+            }
+
+            const mediaUrls = photos.length > 0 ? photos : (thumbnailUrl ? [thumbnailUrl] : []);
+
+            return {
+              text: cleanText,
+              authorName: t.author?.name || 'User',
+              authorHandle: '@' + (t.author?.screen_name || 'user'),
+              avatarUrl: t.author?.avatar_url || null,
+              mediaUrls: mediaUrls,
+              thumbnailUrl: thumbnailUrl,
+              videoUrl: videoUrl
+            };
+          }
+        }
+      } catch (e) {
+        console.warn("FxTwitter fetch error:", e);
+      }
+
+      // 2. Try vxTwitter API
+      try {
+        const vxRes = await fetch(`https://api.vxtwitter.com/Twitter/status/${id}`);
+        if (vxRes.ok) {
+          const data = await vxRes.json();
+          if (data && (data.text || data.mediaURLs)) {
+            const cleanText = (data.text || '').replace(/https:\/\/t\.co\/\S+$/g, '').trim();
+            let videoUrl = null;
+            let thumbnailUrl = null;
+            let photos = [];
+
+            if (data.media_extended && data.media_extended.length > 0) {
+              data.media_extended.forEach(m => {
+                if (m.type === 'video' || m.type === 'gif') {
+                  if (!videoUrl) videoUrl = m.url;
+                  if (!thumbnailUrl) thumbnailUrl = m.thumbnail_url;
+                } else if (m.type === 'image') {
+                  photos.push(m.url);
+                }
+              });
+            } else if (data.mediaURLs && data.mediaURLs.length > 0) {
+              data.mediaURLs.forEach(u => {
+                if (/\.mp4(\?|$)/i.test(u)) {
+                  if (!videoUrl) videoUrl = u;
+                } else {
+                  photos.push(u);
+                }
+              });
+            }
+
+            const mediaUrls = photos.length > 0 ? photos : (thumbnailUrl ? [thumbnailUrl] : []);
+
+            return {
+              text: cleanText,
+              authorName: data.user_name || 'User',
+              authorHandle: '@' + (data.user_screen_name || 'user'),
+              avatarUrl: data.user_profile_image_url || null,
+              mediaUrls: mediaUrls,
+              thumbnailUrl: thumbnailUrl,
+              videoUrl: videoUrl
+            };
+          }
+        }
+      } catch (e) {
+        console.warn("vxTwitter fetch error:", e);
+      }
+
+      // 3. Fallback: Twitter Official Syndication API
+      try {
+        const synRes = await fetch(`https://cdn.syndication.twimg.com/tweet-result?id=${id}&token=0`);
+        if (synRes.ok) {
+          const t = await synRes.json();
+          const cleanText = (t.text || '').replace(/https:\/\/t\.co\/\S+$/g, '').trim();
+          const media = (t.mediaDetails || []).map(m => m.media_url_https).filter(Boolean);
+          let vidUrl = null;
+          let thumbUrl = null;
+
+          if (t.mediaDetails && t.mediaDetails[0] && t.mediaDetails[0].video_info) {
+            const variants = t.mediaDetails[0].video_info.variants || [];
+            const mp4s = variants.filter(v => v.content_type === 'video/mp4').sort((a,b) => (b.bitrate||0) - (a.bitrate||0));
+            if (mp4s.length > 0) vidUrl = mp4s[0].url;
+            thumbUrl = t.mediaDetails[0].media_url_https || null;
+          }
+
+          const mediaUrls = media.length > 0 ? media : (thumbUrl ? [thumbUrl] : []);
+
+          return {
+            text: cleanText,
+            authorName: t.user?.name || 'User',
+            authorHandle: '@' + (t.user?.screen_name || 'user'),
+            avatarUrl: t.user?.profile_image_url_https || null,
+            mediaUrls: mediaUrls,
+            thumbnailUrl: thumbUrl,
+            videoUrl: vidUrl
+          };
+        }
+      } catch (e) {
+        console.warn("Syndication fetch error:", e);
+      }
+
+      throw new Error("Could not fetch tweet. Please check the URL.");
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+          const proxyImg = new Image();
+          proxyImg.crossOrigin = "anonymous";
+          proxyImg.onload = () => resolve(proxyImg);
+          proxyImg.onerror = () => resolve(null);
+          proxyImg.src = `https://images.weserv.nl/?url=${encodeURIComponent(src)}&default=1`;
+        };
+        img.src = src;
+      });
+    }
+
+    // Capture first frame from video stream if no static thumbnail URL is available
+    function captureVideoFrame(videoUrl) {
+      return new Promise((resolve) => {
+        if (!videoUrl) return resolve(null);
+        const video = document.createElement('video');
+        video.crossOrigin = 'anonymous';
+        video.setAttribute('referrerpolicy', 'no-referrer');
+        video.preload = 'auto';
+        video.muted = true;
+        video.playsInline = true;
+
+        let completed = false;
+        const finish = (result) => {
+          if (completed) return;
+          completed = true;
+          video.removeAttribute('src');
+          video.load();
+          resolve(result);
+        };
+
+        const timer = setTimeout(() => finish(null), 8000);
+
+        video.onloadeddata = () => {
+          try {
+            video.currentTime = Math.min(0.1, (video.duration || 1) / 2);
+          } catch (e) {
+            capture();
+          }
+        };
+
+        video.onseeked = () => {
+          capture();
+        };
+
+        function capture() {
+          try {
+            const w = video.videoWidth || 1280;
+            const h = video.videoHeight || 720;
+            const cvs = document.createElement('canvas');
+            cvs.width = w;
+            cvs.height = h;
+            const cCtx = cvs.getContext('2d');
+            cCtx.drawImage(video, 0, 0, w, h);
+            const img = new Image();
+            img.onload = () => {
+              clearTimeout(timer);
+              finish(img);
+            };
+            img.onerror = () => {
+              clearTimeout(timer);
+              finish(null);
+            };
+            img.src = cvs.toDataURL('image/jpeg', 0.95);
+          } catch (err) {
+            clearTimeout(timer);
+            finish(null);
+          }
+        }
+
+        video.onerror = () => {
+          clearTimeout(timer);
+          finish(null);
+        };
+
+        video.src = videoUrl;
+        video.load();
+      });
+    }
+
+    // Video Mode Renderer
+    function renderVideoCard() {
+      videoHeadlineText.innerText = currentTweet.text;
+      const vidSource = currentTweet.videoUrl || "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+
+      cardVideoPlayer.pause();
+      cardVideoPlayer.removeAttribute('src');
+      while (cardVideoPlayer.firstChild) {
+        cardVideoPlayer.removeChild(cardVideoPlayer.firstChild);
+      }
+
+      const sourceEl = document.createElement('source');
+      sourceEl.src = vidSource;
+      sourceEl.type = 'video/mp4';
+      cardVideoPlayer.appendChild(sourceEl);
+      cardVideoPlayer.src = vidSource;
+
+      const posterUrl = currentTweet.thumbnailUrl || (currentTweet.mediaUrls && currentTweet.mediaUrls[0]) || '';
+      if (posterUrl) {
+        cardVideoPlayer.poster = posterUrl;
+      } else {
+        cardVideoPlayer.removeAttribute('poster');
+      }
+
+      cardVideoPlayer.load();
+      cardVideoPlayer.play().catch(e => {
+        console.log("Autoplay deferred:", e);
+      });
+
+      if (videoReplyText) {
+        videoReplyText.innerText = cleanReplyText(currentReply.text);
+      }
+
+      const videoWrapper = document.getElementById('videoWrapper') || cardVideoPlayer.parentElement;
+      videoWrapper.className = "w-full rounded-[14px] overflow-hidden relative border-[0.5px] border-black/30 bg-transparent flex items-center justify-center transition-all";
+
+      // Dynamically fit video's exact native aspect ratio with zero black bars
+      const updateVideoAspect = () => {
+        const vw = cardVideoPlayer.videoWidth;
+        const vh = cardVideoPlayer.videoHeight;
+        if (vw && vh) {
+          videoWrapper.style.aspectRatio = `${vw} / ${vh}`;
+        }
+      };
+
+      cardVideoPlayer.onloadedmetadata = updateVideoAspect;
+      if (cardVideoPlayer.videoWidth && cardVideoPlayer.videoHeight) {
+        updateVideoAspect();
+      }
+
+      // Outer white card adopts the aspect ratio and vertically centers the card contents
+      const videoCard = document.getElementById('videoCardInner');
+      if (videoCard) {
+        videoCard.className = `w-full bg-white rounded-[16px] p-6 shadow-sm flex flex-col justify-center transition-all ${
+          currentRatio === '1:1' ? 'aspect-square' :
+          currentRatio === '3:4' ? 'aspect-[3/4]' :
+          currentRatio === '4:5' ? 'aspect-[4/5]' :
+          'aspect-[9/16]'
+        }`;
+      }
+    }
+
+    // Main Canvas Card Renderer (Snapshot & Double)
+    async function renderTweetCard(tweet, isExport = false) {
+      if (!tweet) return;
+
+      // Ensure custom Twitter Chirp web fonts are fully loaded into canvas
+      if (document.fonts) {
+        await document.fonts.ready;
+      }
+
+      const cardW = 1080;
+      let cardH = 1350; // default 4:5
+      if (currentRatio === '1:1') cardH = 1080;
+      else if (currentRatio === '3:4') cardH = 1440;
+      else if (currentRatio === '4:5') cardH = 1350;
+      else if (currentRatio === '9:16') cardH = 1920;
+
+      canvas.width = cardW;
+      canvas.height = cardH;
+
+      // Pure solid crisp white background
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, cardW, cardH);
+
+      const mediaPadH = 54;
+      const mediaW = cardW - (mediaPadH * 2); // 972px
+
+      // 1. Preload Media & Calculate Uncropped Native Aspect Ratio
+      let loadedMedia = [];
+      if (tweet.mediaUrls && tweet.mediaUrls.length > 0) {
+        loadedMedia = (await Promise.all(tweet.mediaUrls.map(url => loadImage(url)))).filter(Boolean);
+      }
+      // If mediaUrls didn't load any image (or it's a video tweet), use 1st frame screenshot!
+      if (loadedMedia.length === 0) {
+        if (tweet.thumbnailUrl) {
+          const thumb = await loadImage(tweet.thumbnailUrl);
+          if (thumb) loadedMedia = [thumb];
+        } else if (tweet.videoUrl) {
+          const frame = await captureVideoFrame(tweet.videoUrl);
+          if (frame) loadedMedia = [frame];
+        }
+      }
+
+      let mediaHeight = 0;
+      let mediaDrawW = mediaW;
+      let isMultiImage = false;
+      const mediaGap = 18;
+      const eachMediaW = (mediaW - mediaGap) / 2;
+
+      const isDouble = currentMode === 'double';
+      const availableMaxMediaH = cardH - 260 - (isDouble ? 240 : 0);
+
+      if (loadedMedia.length === 1) {
+        const img = loadedMedia[0];
+        const nativeAspect = img.width / img.height;
+        mediaDrawW = mediaW;
+        mediaHeight = mediaW / nativeAspect;
+
+        if (mediaHeight > availableMaxMediaH && availableMaxMediaH > 100) {
+          const scale = availableMaxMediaH / mediaHeight;
+          mediaHeight = availableMaxMediaH;
+          mediaDrawW = mediaDrawW * scale;
+        }
+      } else if (loadedMedia.length >= 2) {
+        isMultiImage = true;
+        const img1 = loadedMedia[0];
+        const aspect1 = img1.width / img1.height;
+        mediaHeight = eachMediaW / aspect1;
+
+        if (mediaHeight > availableMaxMediaH && availableMaxMediaH > 100) {
+          mediaHeight = availableMaxMediaH;
+        }
+      }
+
+      // Horizontal layout: Media and text share the same left alignment (left edge flush)
+      const drawX = (!isMultiImage && loadedMedia.length === 1)
+        ? Math.round(mediaPadH + (mediaW - mediaDrawW) / 2)
+        : mediaPadH;
+      const textStartX = drawX;
+      const textMaxW = (!isMultiImage && loadedMedia.length === 1) ? mediaDrawW : mediaW;
+
+      // 2. Measure Headline Typography (Left-aligned, size 46px, unbolded / regular 400 weight)
+      const fontSize = 46;
+      ctx.font = `400 ${fontSize}px 'TwitterChirp', -apple-system, sans-serif`;
+
+      const lines = wrapText(ctx, tweet.text, textMaxW);
+      const lineHeight = Math.round(fontSize * 1.33); // ~61px
+      const paragraphGap = Math.round(lineHeight * 0.55); // Clean paragraph break spacing
+      const headlineHeight = lines.reduce((acc, l) => acc + (l === '' ? paragraphGap : lineHeight), 0);
+
+      // 3. Pre-measure Bottom 2nd Tweet (Double mode: body text 40px, unbolded / regular 400 weight)
+      let replyTotalHeight = 0;
+      let cleanBody = '';
+      let replyLines = [];
+      const avSize = 102; // Profile size maintained
+      const replyLineHeight = 54;
+      const replyParaGap = Math.round(replyLineHeight * 0.55);
+      let replyBodyHeight = 0;
+
+      if (isDouble && currentReply) {
+        cleanBody = cleanReplyText(currentReply.text);
+        ctx.font = "400 40px 'TwitterChirp', sans-serif"; // Strictly 40px, 400 normal weight
+        replyLines = wrapText(ctx, cleanBody, textMaxW);
+        replyBodyHeight = replyLines.reduce((acc, l) => acc + (l === '' ? replyParaGap : replyLineHeight), 0);
+        replyTotalHeight = avSize + 28 + replyBodyHeight;
+      }
+
+      // 4. Calculate Perfect Vertical Centering (Collective elements vertically centered)
+      const gapHeadlineMedia = mediaHeight > 0 ? 36 : 0;
+      const gapMediaReply = isDouble ? 34 : 0;
+      const totalContentHeight = headlineHeight + gapHeadlineMedia + mediaHeight + gapMediaReply + replyTotalHeight;
+
+      // Center vertically with a minimum safe top margin
+      const minSafeTop = currentRatio === '9:16' ? 110 : 64;
+      let currentY = Math.max(minSafeTop, Math.round((cardH - totalContentHeight) / 2));
+      const initialHeadlineY = currentY;
+
+      // 5. Render Left-Aligned Headline (Only drawn on canvas when exporting)
+      if (isExport) {
+        ctx.fillStyle = "#0F1419";
+        ctx.font = `400 ${fontSize}px 'TwitterChirp', -apple-system, sans-serif`;
+        ctx.textAlign = "start";
+      }
+
+      for (const line of lines) {
+        if (line !== '') {
+          if (isExport) {
+            ctx.fillText(line, textStartX, currentY + fontSize);
+          }
+          currentY += lineHeight;
+        } else {
+          currentY += paragraphGap;
+        }
+      }
+
+      if (mediaHeight > 0) {
+        currentY += gapHeadlineMedia;
+      }
+
+      // 6. Render Centered Media with 0.5px Deep Black Border
+      if (loadedMedia.length > 0) {
+        const cornerRadius = 30;
+
+        if (!isMultiImage) {
+          drawRoundedImage(ctx, loadedMedia[0], drawX, currentY, mediaDrawW, mediaHeight, cornerRadius);
+          currentY += mediaHeight + gapMediaReply;
+        } else {
+          drawRoundedImage(ctx, loadedMedia[0], mediaPadH, currentY, eachMediaW, mediaHeight, cornerRadius);
+          drawRoundedImage(ctx, loadedMedia[1], mediaPadH + eachMediaW + mediaGap, currentY, eachMediaW, mediaHeight, cornerRadius);
+          currentY += mediaHeight + gapMediaReply;
+        }
+      }
+
+      // 7. Render Double Mode: Bottom 2nd Tweet
+      let nameWidth = 140;
+      let replyHeaderY = currentY;
+      let replyCommentY = currentY + avSize + 28;
+      let replyLinesCount = replyLines.length || 1;
+
+      if (isDouble && currentReply) {
+        let replyAvatarImg = currentReply.avatarUrl ? await loadImage(currentReply.avatarUrl) : null;
+
+        ctx.save();
+        if (replyAvatarImg) {
+          drawRoundedCroppedImage(ctx, replyAvatarImg, textStartX, currentY, avSize, avSize, 28);
+        } else {
+          ctx.fillStyle = "#1E293B";
+          drawRoundedRect(ctx, textStartX, currentY, avSize, avSize, 28);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // Author Name & Badge Placement
+        const headerTextX = textStartX + avSize + 24;
+        ctx.font = "800 40px 'TwitterChirp', sans-serif";
+        nameWidth = ctx.measureText(currentReply.authorName).width;
+
+        if (isExport) {
+          ctx.fillStyle = "#0F1419";
+          ctx.fillText(currentReply.authorName, headerTextX, currentY + 46);
+        }
+
+        // Golden Verified Checkmark Badge
+        const badgeSize = 35;
+        const badgeGap = 16;
+        const badgeX = headerTextX + nameWidth + badgeGap;
+        const badgeY = currentY + 14;
+
+        ctx.save();
+        ctx.translate(badgeX, badgeY);
+
+        // White backing circle so checkmark is crisp solid white
+        ctx.fillStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.arc(badgeSize / 2, badgeSize / 2, badgeSize / 2 - 1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw golden verified badge with cutout checkmark
+        ctx.scale(badgeSize / 512, badgeSize / 512);
+        ctx.fillStyle = "#e5a93b";
+        ctx.fill(goldVerifiedPath, "evenodd");
+        ctx.restore();
+
+        // Handle
+        if (isExport) {
+          ctx.fillStyle = "#8E94A0";
+          ctx.font = "500 32px 'TwitterChirp', sans-serif";
+          ctx.fillText(currentReply.authorHandle, headerTextX, currentY + 92);
+        }
+
+        replyCommentY = currentY + avSize + 28;
+        currentY += avSize + 28;
+
+        // Reply Comment Text (Font size 40px, strictly 400 regular weight, preserving paragraphs)
+        if (isExport) {
+          ctx.fillStyle = "#0F1419";
+          ctx.font = "400 40px 'TwitterChirp', sans-serif";
+        }
+        for (const rLine of replyLines) {
+          if (rLine !== '') {
+            if (isExport) {
+              ctx.fillText(rLine, textStartX, currentY + 40);
+            }
+            currentY += replyLineHeight;
+          } else {
+            currentY += replyParaGap;
+          }
+        }
+      }
+
+      // Build interactive in-place editable text regions (Left-aligned, exact flush bounds)
+      const editableBoxes = [
+        {
+          id: 'headline',
+          text: tweet.text,
+          x: textStartX,
+          y: initialHeadlineY,
+          width: textMaxW,
+          fontSize: fontSize,
+          lineHeight: lineHeight,
+          fontWeight: '400',
+          textAlign: 'left',
+          color: '#0F1419',
+          onUpdate: (newVal) => {
+            currentTweet.text = newVal;
+            postUrlInput.value = newVal;
+          }
+        }
+      ];
+
+      if (isDouble && currentReply) {
+        const headerTextX = textStartX + avSize + 24;
+        // Author Name Box
+        editableBoxes.push({
+          id: 'replyName',
+          text: currentReply.authorName,
+          x: headerTextX,
+          y: replyHeaderY + 2,
+          width: nameWidth + 12,
+          nowrap: true,
+          fontSize: 40,
+          lineHeight: 46,
+          fontWeight: '800',
+          color: '#0F1419',
+          onUpdate: (newVal) => {
+            currentReply.authorName = newVal;
+          }
+        });
+
+        // Author Handle Box
+        editableBoxes.push({
+          id: 'replyHandle',
+          text: currentReply.authorHandle,
+          x: headerTextX,
+          y: replyHeaderY + 54,
+          width: 320,
+          nowrap: true,
+          fontSize: 32,
+          lineHeight: 38,
+          fontWeight: '500',
+          color: '#8E94A0',
+          onUpdate: (newVal) => {
+            currentReply.authorHandle = newVal;
+          }
+        });
+
+        // Reply Comment Text Box (Never bold!)
+        editableBoxes.push({
+          id: 'replyText',
+          text: currentReply.text,
+          x: textStartX,
+          y: replyCommentY,
+          width: textMaxW,
+          fontSize: 40,
+          lineHeight: replyLineHeight,
+          fontWeight: '400',
+          color: '#0F1419',
+          onUpdate: (newVal) => {
+            currentReply.text = newVal;
+          }
+        });
+      }
+
+      if (!isExport) {
+        updateTextOverlayLayer(editableBoxes, cardW, cardH);
+      }
+    }
+
+    function updateTextOverlayLayer(boxes, cardW, cardH) {
+      if (!textOverlayLayer) return;
+      textOverlayLayer.innerHTML = '';
+      const rect = canvas.getBoundingClientRect();
+      const clientW = canvas.clientWidth || rect.width || 400;
+      const scale = clientW / cardW;
+
+      boxes.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'editable-text-region';
+        el.style.left = (item.x / cardW * 100) + '%';
+        el.style.top = (item.y / cardH * 100) + '%';
+        el.style.width = (item.width / cardW * 100) + '%';
+        el.style.height = 'auto';
+        el.style.fontSize = (item.fontSize * scale) + 'px';
+        el.style.lineHeight = (item.lineHeight * scale) + 'px';
+        el.style.fontWeight = item.fontWeight || '400';
+        el.style.fontFamily = "'TwitterChirp', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        el.style.textAlign = item.textAlign || 'left';
+        el.style.color = item.color || '#0F1419';
+        if (item.nowrap) {
+          el.style.whiteSpace = 'nowrap';
+          el.style.wordBreak = 'normal';
+        } else {
+          el.style.whiteSpace = 'pre-wrap';
+          el.style.wordBreak = 'break-word';
+        }
+        el.innerText = item.text;
+        el.title = "Click to edit text";
+        el.contentEditable = "true";
+        el.spellcheck = false;
+
+        el.addEventListener('focus', () => {
+          if (activeEditBox && activeEditBox !== el) {
+            activeEditBox.classList.remove('is-selected');
+          }
+          activeEditBox = el;
+          el.classList.add('is-selected');
+        });
+
+        el.addEventListener('input', () => {
+          const cleanVal = el.innerText;
+          item.onUpdate(cleanVal);
+        });
+
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            el.blur();
+            deselectAll();
+          } else if (e.key === 'Enter' && !e.shiftKey && (item.id === 'replyName' || item.id === 'replyHandle')) {
+            e.preventDefault();
+            el.blur();
+            deselectAll();
+          }
+        });
+
+        textOverlayLayer.appendChild(el);
+      });
+    }
+
+    function deselectAll() {
+      if (activeEditBox) {
+        const box = activeEditBox;
+        activeEditBox = null;
+        box.classList.remove('is-selected');
+        box.blur();
+        if (currentReply) {
+          currentReply.text = cleanReplyText(currentReply.text);
+        }
+        renderTweetCard(currentTweet, false);
+      }
+
+      // Also deselect video editable elements
+      document.querySelectorAll('.video-editable-text.is-selected').forEach(el => {
+        el.classList.remove('is-selected');
+        el.blur();
+      });
+    }
+
+    // Global click outside to deselect
+    document.addEventListener('pointerdown', (e) => {
+      if (!e.target.closest('.editable-text-region') && !e.target.closest('.video-editable-text') && !e.target.closest('#btnSaveTop')) {
+        deselectAll();
+      }
+    });
+
+    // Resize event to re-scale editable overlays
+    window.addEventListener('resize', () => {
+      if (currentMode !== 'video') {
+        renderTweetCard(currentTweet);
+      }
+    });
+
+    // Setup Video Mode Editable Texts
+    ['videoHeadlineText', 'videoReplyName', 'videoReplyHandle', 'videoReplyText'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      el.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+        if (el.classList.contains('is-selected')) return;
+        deselectAll();
+
+        el.classList.add('is-selected');
+        el.contentEditable = "true";
+        el.focus();
+
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+      });
+
+      el.addEventListener('input', () => {
+        const val = el.innerText.trim();
+        if (id === 'videoHeadlineText') {
+          currentTweet.text = val;
+          postUrlInput.value = val;
+        } else if (id === 'videoReplyName') {
+          currentReply.authorName = val;
+        } else if (id === 'videoReplyHandle') {
+          currentReply.authorHandle = val;
+        } else if (id === 'videoReplyText') {
+          currentReply.text = val;
+        }
+      });
+
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' || (e.key === 'Enter' && !e.shiftKey)) {
+          e.preventDefault();
+          deselectAll();
+        }
+      });
+    });
+
+    function wrapText(ctx, text, maxWidth) {
+      if (!text) return [];
+      const paragraphs = text.split(/\r?\n/);
+      const allLines = [];
+
+      for (let p = 0; p < paragraphs.length; p++) {
+        const paragraph = paragraphs[p];
+        if (paragraph.trim() === '') {
+          // Preserve empty line / paragraph separation
+          allLines.push('');
+          continue;
+        }
+
+        const words = paragraph.trim().split(/[ \t]+/);
+        let currentLine = words[0] || '';
+
+        for (let i = 1; i < words.length; i++) {
+          const word = words[i];
+          const testLine = currentLine + " " + word;
+          const width = ctx.measureText(testLine).width;
+          if (width <= maxWidth) {
+            currentLine = testLine;
+          } else {
+            allLines.push(currentLine);
+            currentLine = word;
+          }
+        }
+        if (currentLine) {
+          allLines.push(currentLine);
+        }
+      }
+
+      return allLines;
+    }
+
+    function drawRoundedRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function drawRoundedImage(ctx, img, x, y, width, height, radius) {
+      ctx.save();
+      drawRoundedRect(ctx, x, y, width, height, radius);
+      ctx.clip();
+      ctx.drawImage(img, x, y, width, height);
+      ctx.restore();
+
+      // 0.5px deep black border around the media
+      ctx.save();
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 0.5; // Exactly 0.5px fine border
+      drawRoundedRect(ctx, x, y, width, height, radius);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawRoundedCroppedImage(ctx, img, x, y, width, height, radius) {
+      ctx.save();
+      drawRoundedRect(ctx, x, y, width, height, radius);
+      ctx.clip();
+
+      const srcW = img.width;
+      const srcH = img.height;
+      const scale = Math.max(width / srcW, height / srcH);
+      const scaledW = srcW * scale;
+      const scaledH = srcH * scale;
+      const left = x + (width - scaledW) / 2;
+      const top = y + (height - scaledH) / 2;
+
+      ctx.drawImage(img, left, top, scaledW, scaledH);
+      ctx.restore();
+    }
+
+    // Top Save Button Action
+    btnSaveTop.addEventListener('click', async () => {
+      if (currentMode === 'video') {
+        const videoSrc = cardVideoPlayer.currentSrc || currentTweet.videoUrl;
+        if (videoSrc) {
+          const a = document.createElement('a');
+          a.href = videoSrc;
+          a.download = `XShot_${Date.now()}.mp4`;
+          a.target = '_blank';
+          a.click();
+        }
+      } else {
+        deselectAll();
+        await renderTweetCard(currentTweet, true);
+        const link = document.createElement('a');
+        link.download = `XShot_${currentMode}_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        await renderTweetCard(currentTweet, false);
+      }
+    });
+
+    function setLoading(isLoading) {
+      if (isLoading) {
+        clipboardIcon.classList.add('hidden');
+        btnSpinner.classList.remove('hidden');
+        btnFetch.disabled = true;
+        if (cardLoaderOverlay) cardLoaderOverlay.classList.remove('hidden');
+      } else {
+        clipboardIcon.classList.remove('hidden');
+        btnSpinner.classList.add('hidden');
+        btnFetch.disabled = false;
+        if (cardLoaderOverlay) cardLoaderOverlay.classList.add('hidden');
+      }
+    }
+
+    // Initial Load
+    window.addEventListener('DOMContentLoaded', () => {
+      postUrlInput.value = "https://x.com/gtasix_/status/2121519137667027013";
+      setMode('snapshot');
+    });
+  </script>
+</body>
+</html>
