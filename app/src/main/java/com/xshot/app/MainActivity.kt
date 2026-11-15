@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         // Mode: Double
         binding.cardModeDouble.setOnClickListener {
+            currentStyle = CardRenderer.Style.DOUBLE
             binding.cardModeDouble.strokeWidth = dpToPx(2)
             binding.cardModeSnapshot.strokeWidth = 0
             binding.cardModeVideo.strokeWidth = 0
@@ -126,10 +127,21 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val tweet = TweetFetcher.fetch(url)
+                val replyTweet = if (currentStyle == CardRenderer.Style.DOUBLE) {
+                    val url2 = binding.etUrl2.text.toString().trim()
+                    if (url2.isNotEmpty()) {
+                        try {
+                            TweetFetcher.fetch(url2)
+                        } catch (_: Exception) {
+                            null
+                        }
+                    } else null
+                } else null
 
                 val bitmap = CardRenderer.renderCard(
                     context = this@MainActivity,
                     tweet = tweet,
+                    replyTweet = replyTweet,
                     style = currentStyle,
                     is45Ratio = is45Ratio
                 )
